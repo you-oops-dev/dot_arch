@@ -12823,23 +12823,6 @@
       "details": "https://archlinux.org/mirrors/geo.mirror.pkgbuild.com/2231/"
     },
     {
-      "url": "https://sydney.mirror.pkgbuild.com/",
-      "protocol": "https",
-      "last_sync": null,
-      "completion_pct": 0.0,
-      "delay": null,
-      "duration_avg": null,
-      "duration_stddev": null,
-      "score": null,
-      "active": true,
-      "country": "Australia",
-      "country_code": "AU",
-      "isos": true,
-      "ipv4": true,
-      "ipv6": true,
-      "details": "https://archlinux.org/mirrors/geo.mirror.pkgbuild.com/1767/"
-    },
-    {
       "url": "https://taipei.mirror.pkgbuild.com/",
       "protocol": "https",
       "last_sync": "2025-11-23T18:34:07Z",
@@ -12991,23 +12974,6 @@
       "ipv4": true,
       "ipv6": true,
       "details": "https://archlinux.org/mirrors/geo.mirror.pkgbuild.com/2347/"
-    },
-    {
-      "url": "rsync://sydney.mirror.pkgbuild.com/packages/",
-      "protocol": "rsync",
-      "last_sync": null,
-      "completion_pct": 0.0,
-      "delay": null,
-      "duration_avg": 0.03014005720615387,
-      "duration_stddev": 0.16456417341314178,
-      "score": null,
-      "active": true,
-      "country": "Australia",
-      "country_code": "AU",
-      "isos": true,
-      "ipv4": true,
-      "ipv6": true,
-      "details": "https://archlinux.org/mirrors/geo.mirror.pkgbuild.com/2342/"
     },
     {
       "url": "rsync://taipei.mirror.pkgbuild.com/packages/",
