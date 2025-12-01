@@ -1,0 +1,97 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Sync status mirror Arch Linux
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+on:
+  workflow_dispatch:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron:  '20 * * * *'
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # The "build" workflow
+  Start_sync:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+
+    - name: Maximize disk space
+      uses: easimon/maximize-build-space@master
+      with:
+          root-reserve-mb: 5120
+          remove-dotnet: true
+          remove-android: true
+          remove-docker-images: true
+
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v4
+
+    - name: Settings DoT DNS with systemd-resolved
+      run: |
+         sudo apt update
+         sudo apt install -y bind9-dnsutils sudo --no-install-suggests
+         sudo mkdir -pv /etc/systemd/resolved.conf.d/
+         echo -e "[Resolve]\nDNS=8.8.4.4#dns.google\nFallbackDNS=\nDNSOverTLS=yes\nDNSSEC=yes\nCache=yes\nCacheFromLocalhost=yes\nReadEtcHosts=no" | sudo tee /etc/systemd/resolved.conf.d/google.conf &>/dev/null;
+         echo -e "[Resolve]\nDNS=1.0.0.1#1dot1dot1dot1.cloudflare-dns.com\nFallbackDNS=\nDNSOverTLS=yes\nDNSSEC=yes\nCache=yes\nCacheFromLocalhost=yes\nReadEtcHosts=no" | sudo tee /etc/systemd/resolved.conf.d/cloudflare.conf &>/dev/null;
+         cat /etc/systemd/resolved.conf.d/google.conf
+         echo ""
+         cat /etc/systemd/resolved.conf.d/cloudflare.conf
+         echo ""
+         echo "nameserver 127.0.0.53" | sudo tee /etc/resolv.conf.DNSoverride &>/dev/null;
+         sudo ln -svf /etc/resolv.conf.DNSoverride /etc/resolv.conf
+         cat -n /etc/resolv.conf
+         echo ""
+         cat -n /etc/hosts
+         echo ""
+         sudo systemctl restart systemd-resolved.service
+         sleep 3s
+         nc -z -v 127.0.0.53 53 && echo ""
+
+    - name: Test DNS-query
+      env:
+        SUPER_SECRET1: ${{ secrets.DOMAIN_PROXY }}
+      run: |
+       nslookup -type=A google.com
+       echo ""
+       dig google.com A
+       dig ${SUPER_SECRET1} A +short &>/dev/null && dig ${SUPER_SECRET1} A +short &>/dev/null
+
+    - name: Install dependencies for start script
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+       sudo apt upgrade -y
+       sudo apt install -y git wget curl bash coreutils util-linux moreutils ccache dos2unix sudo language-pack-ru language-pack-en locales --no-install-suggests
+       sudo sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
+       sudo sed -i -e 's/# ru_RU.UTF-8 UTF-8/ru_RU.UTF-8 UTF-8/' /etc/locale.gen && \
+       sudo locale-gen --no-purge en_US.UTF-8 ru_RU.UTF-8 && \
+       sudo apt install -y jq --no-install-suggests
+
+    - name: Sync Status mirror Arch save in file
+      env:
+        LANG: en_US.UTF-8
+        CHARSET: UTF-8
+        SUPER_SECRET1: ${{ secrets.DOMAIN_PROXY }}
+        SUPER_SECRET2: ${{ secrets.PROXY_PORT }}
+        SUPER_SECRET3: ${{ secrets.USER }}
+        SUPER_SECRET4: ${{ secrets.PASSWORD }}
+        SUPER_SECRET5: ${{ secrets.DOMAIN_PROXY2 }}
+        SUPER_SECRET6: ${{ secrets.PROXY_PORT2 }}
+      run: |
+        bash -x bin/sync_script.sh && dos2unix ./json*
+
+    - name: Commit sync status Arch mirrors
+      uses: stefanzweifel/git-auto-commit-action@v5
+      with:
+        commit_message: "Complete sync"
+        file_pattern: 'json*'
+        commit_options: "--no-verify"
+        repository: .
+        commit_user_name: github-actions[bot]
+        commit_user_email: github-actions[bot]@users.noreply.github.com
+        commit_author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
+
