@@ -6070,7 +6070,7 @@
       "country_code": "KR",
       "isos": true,
       "ipv4": true,
-      "ipv6": false,
+      "ipv6": true,
       "details": "https://archlinux.org/mirrors/lanet.kr/1015/"
     },
     {
@@ -6087,7 +6087,7 @@
       "country_code": "KR",
       "isos": true,
       "ipv4": true,
-      "ipv6": false,
+      "ipv6": true,
       "details": "https://archlinux.org/mirrors/lanet.kr/1016/"
     },
     {
