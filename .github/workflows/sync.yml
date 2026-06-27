@@ -51,14 +51,14 @@ jobs:
          sleep 3s
          nc -z -v 127.0.0.53 53 && echo ""
 
-    - name: Test DNS-query
-      env:
-        SUPER_SECRET1: ${{ secrets.DOMAIN_PROXY }}
-      run: |
-       nslookup -type=A google.com
-       echo ""
-       dig google.com A
-       dig ${SUPER_SECRET1} A +short &>/dev/null && dig ${SUPER_SECRET1} A +short &>/dev/null
+#    - name: Test DNS-query
+#      env:
+#        SUPER_SECRET1: ${{ secrets.DOMAIN_PROXY }}
+#      run: |
+#       nslookup -type=A google.com
+#       echo ""
+#       dig google.com A
+#       dig ${SUPER_SECRET1} A +short &>/dev/null && dig ${SUPER_SECRET1} A +short &>/dev/null
 
     - name: Install dependencies for start script
       env:
