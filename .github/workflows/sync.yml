@@ -64,7 +64,6 @@ jobs:
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
-       sudo apt upgrade -y
        sudo apt install -y git wget curl bash coreutils util-linux moreutils ccache dos2unix sudo language-pack-ru language-pack-en locales --no-install-suggests
        sudo sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
        sudo sed -i -e 's/# ru_RU.UTF-8 UTF-8/ru_RU.UTF-8 UTF-8/' /etc/locale.gen && \
